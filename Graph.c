@@ -7,10 +7,10 @@
 // Graph - Using a list of adjacency lists representation
 //
 
-// Student Name :
-// Student Number :
-// Student Name :
-// Student Number :
+// Student Name : Luís Pedro Costa Néri Correia
+// Student Number : 125264
+// Student Name : Guilherme Mendes Martins
+// Student Number : 125260
 
 /*** COMPLETE THE GraphGetSetAdjacentsTo FUNCTION */
 /*** COMPLETE THE GraphComputeVertexWeights FUNCTION ***/
@@ -263,7 +263,7 @@ Graph* GraphGetSubgraph(const Graph* g, IndicesSet* vertSet) {
   Graph* new = GraphCreateEmpty(g->indicesRange, g->isDigraph, g->isWeighted);
 
   //
-  // TO BE COMPLETED
+  // TODO TO BE COMPLETED
   //
 
   GraphCheckInvariants(new);
@@ -378,8 +378,29 @@ IndicesSet* GraphGetSetAdjacentsTo(const Graph* g, unsigned int v) {
   IndicesSet* adjacents_set = IndicesSetCreateEmpty(g->indicesRange);
 
   //
-  // TO BE COMPLETED
-  //
+  // TODO TO BE COMPLETED
+
+  // Move list to the index v
+  ListMove(g->verticesList, v);
+  // Save the vertex corresponding to the index v
+  struct _Vertex* vertex = (struct _Vertex*) ListGetCurrentItem(g->verticesList);
+
+  // Make sure verticesList is at head
+  ListMoveToHead(vertex->edgesList);
+
+  // Iterate through the vertex's edge list
+  for(int i = 0; i < ListGetSize(vertex->edgesList); i++) {
+    // Get item in current position and add it to the adjacents_set
+    struct _Edge* edge = (struct _Edge*) ListGetCurrentItem(vertex->edgesList);
+    IndicesSetAdd(adjacents_set, edge->adjVertex);
+
+    // Move list to next element
+    ListMoveToNext(vertex->edgesList);
+  }
+
+  // Move lists back to head
+  ListMoveToHead(g->verticesList);
+  ListMoveToHead(vertex->edgesList);
 
   return adjacents_set;
 }
@@ -404,7 +425,7 @@ double* GraphComputeVertexWeights(const Graph* g) {
   }
 
   //
-  // TO BE COMPLETED
+  // TODO TO BE COMPLETED
   //
 
   return weightsArray;

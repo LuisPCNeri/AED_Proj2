@@ -6,10 +6,10 @@
 // GraphDominatingSets - Computing Vertex Dominating Sets for UNDIRECTED graphs
 //
 
-// Student Name :
-// Student Number :
-// Student Name :
-// Student Number :
+// Student Name : Luís Pedro Costa Néri Correia
+// Student Number : 125264
+// Student Name : Guilherme Mendes Martins
+// Student Number : 125260
 
 /*** COMPLETE THE GraphIsDominatingSet FUNCTION ***/
 /*** COMPLETE THE GraphMinDominatingSet FUNCTION ***/
@@ -40,7 +40,7 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
   assert(IndicesSetIsEmpty(vertSet) == 0);
 
   //
-  // TO BE COMPLETED
+  // TODO TO BE COMPLETED
   //
 
   return 0;
@@ -58,7 +58,7 @@ IndicesSet* GraphComputeMinDominatingSet(const Graph* g) {
   assert(GraphIsDigraph(g) == 0);
 
   //
-  // TO BE COMPLETED
+  // TODO TO BE COMPLETED
   //
 
   // Change this according to your algorithm
@@ -79,7 +79,7 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
   assert(GraphIsDigraph(g) == 0);
 
   //
-  // TO BE COMPLETED
+  // TODO TO BE COMPLETED
   //
 
   // Change this according to your algorithm
