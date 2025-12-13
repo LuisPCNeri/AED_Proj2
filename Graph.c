@@ -426,7 +426,47 @@ double* GraphComputeVertexWeights(const Graph* g) {
 
   //
   // TODO TO BE COMPLETED
-  //
+  // TODO Check if works with weighted graphs
+  // Set verticesList current item to head
+  ListMoveToHead(g->verticesList);
+
+  // Traverse the WHOLE graph
+  for(int i = 0; i < ListGetSize(g->verticesList); i++){
+    // Get current vertex
+    struct _Vertex* vertex = (struct _Vertex*) ListGetCurrentItem(g->verticesList);
+
+    // If graph is NOT weighted put the vertex's degree in the array and continue
+    if(g->isWeighted == 0){
+      weightsArray[vertex->id] = vertex->outDegree;
+
+      // Move to next element
+      ListMoveToNext(g->verticesList);
+
+      continue;
+    }
+
+    // Variable to store the vertex's total weight
+    double vertexTotalWeight = 0;
+
+    // Set list->current to head
+    ListMoveToHead(vertex->edgesList);
+    // Get all of the vertex's edges and sum up their weight
+    for(int k = 0; k < ListGetSize(vertex->edgesList); k++){
+      // Get the current edge
+      struct _Edge* edge = (struct _Edge*) ListGetCurrentItem(vertex->edgesList);
+
+      vertexTotalWeight += edge->weight;
+
+      // Move to next element
+      ListMoveToNext(vertex->edgesList);
+    }
+    
+    // Set the weight of that vertex
+    weightsArray[vertex->id] = vertexTotalWeight;
+
+    // Move to next element
+    ListMoveToNext(g->verticesList);
+  }
 
   return weightsArray;
 }

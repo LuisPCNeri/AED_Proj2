@@ -14,6 +14,12 @@
 #include "Graph.h"
 #include "IndicesSet.h"
 
+// COLORS :)
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+
 int main(void) {
   // What kind of graph is g01?
   Graph* g01 = GraphCreate(6, 1, 0);
@@ -136,6 +142,56 @@ int main(void) {
   GraphDisplayDOT(subg041);
   printf("\n");
 
+
+  printf(GREEN"========== STUDENT MADE TESTS =========="RESET"\n");
+
+  // Create a new weighted graph
+  Graph* wGraph = GraphCreate(6, 0, 1);
+  // VERTEX 0
+  GraphAddWeightedEdge(wGraph, 0, 1, 1);
+  GraphAddWeightedEdge(wGraph, 0, 2, 2);
+  GraphAddWeightedEdge(wGraph, 0, 3, 4);
+  // VERTEX 1
+  GraphAddWeightedEdge(wGraph, 1, 2, 1);
+  // VERTEX 2
+  GraphAddWeightedEdge(wGraph, 2, 3, 1);
+  GraphAddWeightedEdge(wGraph, 2, 5, 3);
+  // VERTEX 3
+  GraphAddWeightedEdge(wGraph, 3, 4, 1);
+  GraphAddWeightedEdge(wGraph, 3, 5, 2);
+  // VERTEX 4
+  GraphAddWeightedEdge(wGraph, 4, 5, 1);
+
+  printf(RED"The graph:"RESET"\n");
+  // Displaying in DOT format
+  GraphDisplayDOT(wGraph);
+
+  // Save new graph in file
+  FILE* fptr = fopen("Weigthed Graph.DOT", "w");
+  GraphToDOTFile(wGraph, fptr);
+  fclose(fptr);
+
+  printf(GREEN"========== GRAPH W COMPUTE VERTEX WEIGHTS ============"RESET"\n");
+  double* wwGraph = GraphComputeVertexWeights(wGraph);
+  for (unsigned int i = 0; i < GraphGetVertexRange(wGraph); i++) {
+    if (wwGraph[i] != -1) {
+      printf("Vertex %u : weight = %f\n", i, wwGraph[i]);
+    }
+  }
+  printf("\n");
+  free(wwGraph);
+
+  printf(GREEN"========== GRAPH 2 COMPUTE VERTEX WEIGHTS ============"RESET"\n");
+  double* weights_g02 = GraphComputeVertexWeights(g02);
+  for (unsigned int i = 0; i < GraphGetVertexRange(g02); i++) {
+    if (weights_g02[i] != -1) {
+      printf("Vertex %u : weight = %f\n", i, weights_g02[i]);
+    }
+  }
+  printf("\n");
+  free(weights_g02);
+
+
   // Clearing
   GraphDestroy(&g01);
   GraphDestroy(&g02);
@@ -144,6 +200,9 @@ int main(void) {
   GraphDestroy(&subg032);
   GraphDestroy(&g04);
   GraphDestroy(&subg041);
+
+  // DESTROY STUDENT TESTS
+  GraphDestroy(&wGraph);
 
   return 0;
 }
