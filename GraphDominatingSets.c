@@ -42,8 +42,36 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
   //
   // TODO TO BE COMPLETED
   //
+  
+  // getting the set difference, vertSet - [g's vertexes] = all vertices in g that are not in vertSet
+  IndicesSet* setsDifference = IndicesSetCreateCopy(GraphGetSetVertices(g));
+  IndicesSetDifference(setsDifference, vertSet);
 
-  return 0;
+  // getting the set union
+  IndicesSet* setsUnion = IndicesSetCreateCopy(GraphGetSetVertices(g));
+  IndicesSetUnion(setsUnion, vertSet);
+
+  uint16_t currentElement;
+  while((currentElement = IndicesSetGetNextElem(setsDifference)) != -1) {
+      // get vertexes adjacent to the current vertex
+      IndicesSet* adjacentVertices = GraphGetSetAdjacentsTo(g, currentElement);
+
+      uint16_t currentAdjElement;
+      while((currentElement = IndicesSetGetNextElem(adjacentVertices)) != -1) {
+        // if at least one of the adjacent vertexes is both in g and in vertSet, break this loop and move on  
+        if (IndicesSetContains(setsUnion, currentAdjElement)) {
+            break;
+          }
+      }
+      // if the loop looked through all vertices and none was both in g and in vertSet:
+      // the set is not dominating, return 0
+      if (currentAdjElement == -1) {
+        return 0;
+      }
+  }
+
+  // else, the set IS dominant: return 1
+  return 1;
 }
 
 //
