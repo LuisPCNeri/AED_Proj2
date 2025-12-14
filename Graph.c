@@ -266,7 +266,6 @@ Graph* GraphGetSubgraph(const Graph* g, IndicesSet* vertSet) {
   // TODO TO BE COMPLETED
 
   // Loop through g's vertexes
-  // THIS IS IF the subgraph IS NOT a copy of the given graph
   ListMoveToHead(g->verticesList);
 
   for(unsigned int i = 0; i < g->indicesRange; i++){
