@@ -97,6 +97,7 @@ int main(void) {
   IndicesSetDestroy(&vertices);
 
   // Displaying in DOT format
+  printf(GREEN"========== SUBGRAPH OF G03 =========="RESET"\n");
   GraphDisplayDOT(subg031);
   printf("\n");
 
@@ -112,6 +113,7 @@ int main(void) {
   IndicesSetDestroy(&vertices);
 
   // Displaying in DOT format
+  printf(GREEN"========== SUBGRAPH OF G03 2 =========="RESET"\n");
   GraphDisplayDOT(subg032);
   printf("\n");
 
@@ -139,6 +141,7 @@ int main(void) {
   IndicesSetDestroy(&vertices);
 
   // Displaying in DOT format
+  printf(GREEN"========== SUBGRAPH OF G04 =========="RESET"\n");
   GraphDisplayDOT(subg041);
   printf("\n");
 
@@ -167,7 +170,7 @@ int main(void) {
   GraphDisplayDOT(wGraph);
 
   // Save new graph in file
-  FILE* fptr = fopen("Weigthed Graph.DOT", "w");
+  FILE* fptr = fopen("Weigthed_Graph.DOT", "w");
   GraphToDOTFile(wGraph, fptr);
   fclose(fptr);
 
@@ -191,6 +194,19 @@ int main(void) {
   printf("\n");
   free(weights_g02);
 
+  printf(GREEN"========== GRAPH W SUBGRAPH ========="RESET"\n");
+  IndicesSet* wSet = IndicesSetCreateEmpty(6);
+  IndicesSetAdd(wSet, 0);
+  IndicesSetAdd(wSet, 2);
+  IndicesSetAdd(wSet, 3);
+  IndicesSetAdd(wSet, 4);
+  IndicesSetAdd(wSet, 5);
+
+  Graph* wSub = GraphGetSubgraph(wGraph, wSet);
+  GraphDisplayDOT(wSub);
+
+  IndicesSetDestroy(&wSet);
+  GraphDestroy(&wSub);
 
   // Clearing
   GraphDestroy(&g01);
