@@ -264,6 +264,39 @@ Graph* GraphGetSubgraph(const Graph* g, IndicesSet* vertSet) {
 
   //
   // TODO TO BE COMPLETED
+
+  // Loop through g's vertexes
+  ListMoveToHead(g->verticesList);
+
+  for(unsigned int i = 0; i < g->indicesRange; i++){
+    // Get current vertex
+    struct _Vertex* vertex = (struct _Vertex*) ListGetCurrentItem(g->verticesList);
+
+    if(IndicesSetContains(vertSet, vertex->id)){
+      // Add the vertex to graph if it was not added in the adjacent vertexes part
+      GraphAddVertex(new, vertex->id);
+
+      ListMoveToHead(vertex->edgesList);
+      // Loop through adjacent vertexes and add all applicable adjacent vertexes
+      for(int k = 0; k < ListGetSize(vertex->edgesList); k++){
+        struct _Edge* edge = ListGetCurrentItem(vertex->edgesList);
+
+        if(IndicesSetContains(vertSet, edge->adjVertex)){
+          // Add adjacent vertex to graph
+          GraphAddVertex(new, edge->adjVertex);
+
+          // Add edge to the graph
+          if(new->isWeighted == 1) GraphAddWeightedEdge(new, vertex->id, edge->adjVertex, edge->weight);
+          else GraphAddEdge(new, vertex->id, edge->adjVertex);
+        }
+
+        ListMoveToNext(vertex->edgesList);
+      }
+    }
+
+    ListMoveToNext(g->verticesList);
+  }
+
   //
 
   GraphCheckInvariants(new);
