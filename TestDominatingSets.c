@@ -14,6 +14,12 @@
 #include "GraphDominatingSets.h"
 #include "IndicesSet.h"
 
+// COLORS :)
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+
 int main(void) {
   // Reading an undirected graph from file
   FILE* file = fopen("G_2.txt", "r");
@@ -93,6 +99,10 @@ int main(void) {
   GraphDisplayDOT(mdset_graph);
 
   // testing the GraphComputeMinWeightDominatingSet() function
+
+  // Student made tests
+  printf(GREEN"========== Student made tests ========="RESET"\n");
+
   // Create a new weighted graph
   Graph* g04 = GraphCreate(6, 0, 1);
   // VERTEX 0
@@ -110,9 +120,35 @@ int main(void) {
   // VERTEX 4
   GraphAddWeightedEdge(g04, 4, 5, 1);
   GraphDisplayDOT(g04);
+
+  printf(GREEN"========== Compute Min Weight Dominating Set G04 =========="RESET"\n");
+
   IndicesSet* minWeightSet = GraphComputeMinWeightDominatingSet(g04);
-  IndicesSetDisplay(minWeightSet);
-  IndicesSetDestroy(&minWeightSet); 
+  IndicesSetDisplay(minWeightSet); 
+
+  Graph* mdsG04 = GraphGetSubgraph(g04, minWeightSet);
+  GraphDisplayDOT(mdsG04);
+  GraphDestroy(&mdsG04);
+
+  printf(GREEN"========== Compute Min Dominating Set G04 =========="RESET"\n");
+
+  IndicesSet* minDSet = GraphComputeMinDominatingSet(g04);
+  IndicesSetDisplay(minDSet);
+  
+  Graph* mwdsG04 = GraphGetSubgraph(g04, minDSet);
+  GraphDisplayDOT(mwdsG04);
+  GraphDestroy(&mwdsG04);
+
+  printf(GREEN"========== Is Dominating Set G04 =========="RESET"\n");
+
+  printf("The full set is a dominating set? %d\n",
+         GraphIsDominatingSet(g04, minWeightSet));
+  printf("The full set is a dominating set? %d\n",
+         GraphIsDominatingSet(g04, minDSet));
+
+
+  IndicesSetDestroy(&minWeightSet);
+  IndicesSetDestroy(&minDSet);
 
   // The union of the mdset with the set of neighbors of each mdset vertex MUST
   // BE the full vertices set of the graph and the induced subgraph is the graph

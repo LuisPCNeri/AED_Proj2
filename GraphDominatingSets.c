@@ -38,6 +38,9 @@ static double GraphCalculateTotalVertexWeight(const Graph* g) {
     result += vertexWeights[i];
   }
 
+  // Free memory of array
+  free(vertexWeights);
+
   return result;
 }
 
@@ -61,13 +64,23 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
   //
   
   // getting the set difference, vertSet - [g's vertexes] = all vertices in g that are not in vertSet
-  IndicesSet* setsDifference = IndicesSetCreateCopy(GraphGetSetVertices(g));
+
+  IndicesSet* gSetVertices = GraphGetSetVertices(g);
+
+  IndicesSet* setsDifference = IndicesSetCreateCopy(gSetVertices);
   IndicesSetDifference(setsDifference, vertSet);
   // if the set difference is an empty set, vertSet is a dominating set
-  if (IndicesSetIsEmpty(setsDifference)) return 1;
+  if (IndicesSetIsEmpty(setsDifference)){
+
+    // Clean Up before returning
+    IndicesSetDestroy(&gSetVertices);
+    IndicesSetDestroy(&setsDifference);
+
+    return 1;
+  }
 
   // getting the set union
-  IndicesSet* setsUnion = IndicesSetCreateCopy(GraphGetSetVertices(g));
+  IndicesSet* setsUnion = IndicesSetCreateCopy(gSetVertices);
   IndicesSetUnion(setsUnion, vertSet);
 
   int currentElement = IndicesSetGetNextElem(setsDifference);
@@ -87,11 +100,26 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
     // if the loop looked through all vertices and none was both in g and in vertSet:
     // the set is not dominating, return 0
     if (currentAdjElement == -1) {
+
+      // Clean Up before returning
+      IndicesSetDestroy(&adjacentVertices);
+      IndicesSetDestroy(&setsDifference);
+      IndicesSetDestroy(&gSetVertices);
+      IndicesSetDestroy(&setsUnion);
       return 0;
     }
 
     currentElement = IndicesSetGetNextElem(setsDifference);
+
+    // Destroy the indices set for the ajacent vertexes used for this iteration before going to the next
+    IndicesSetDestroy(&adjacentVertices);
   }
+
+  // Free indicesSets used to help during the function run time
+  IndicesSetDestroy(&setsDifference);
+  IndicesSetDestroy(&gSetVertices);
+  IndicesSetDestroy(&setsUnion);
+  
 
   // else, the set IS dominant: return 1
   return 1;
