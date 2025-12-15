@@ -92,6 +92,28 @@ int main(void) {
   mdset_graph = GraphGetSubgraph(g03, mdset);
   GraphDisplayDOT(mdset_graph);
 
+  // testing the GraphComputeMinWeightDominatingSet() function
+  // Create a new weighted graph
+  Graph* g04 = GraphCreate(6, 0, 1);
+  // VERTEX 0
+  GraphAddWeightedEdge(g04, 0, 1, 1);
+  GraphAddWeightedEdge(g04, 0, 2, 2);
+  GraphAddWeightedEdge(g04, 0, 3, 4);
+  // VERTEX 1
+  GraphAddWeightedEdge(g04, 1, 2, 1);
+  // VERTEX 2
+  GraphAddWeightedEdge(g04, 2, 3, 1);
+  GraphAddWeightedEdge(g04, 2, 5, 3);
+  // VERTEX 3
+  GraphAddWeightedEdge(g04, 3, 4, 1);
+  GraphAddWeightedEdge(g04, 3, 5, 2);
+  // VERTEX 4
+  GraphAddWeightedEdge(g04, 4, 5, 1);
+  GraphDisplayDOT(g04);
+  IndicesSet* minWeightSet = GraphComputeMinWeightDominatingSet(g04);
+  IndicesSetDisplay(minWeightSet);
+  IndicesSetDestroy(&minWeightSet); 
+
   // The union of the mdset with the set of neighbors of each mdset vertex MUST
   // BE the full vertices set of the graph and the induced subgraph is the graph
   // itself
@@ -107,6 +129,7 @@ int main(void) {
 
   GraphDestroy(&g02);
   GraphDestroy(&g03);
+  GraphDestroy(&g04);
 
   return 0;
 }

@@ -34,7 +34,7 @@ static double GraphCalculateTotalVertexWeight(const Graph* g) {
   double result = 0;
   double* vertexWeights = GraphComputeVertexWeights(g);
 
-  for (int i = 0; i < sizeof(vertexWeights) / sizeof(double); i++) {
+  for (unsigned int i = 0; i < GraphGetNumVertices(g); i++) {
     result += vertexWeights[i];
   }
 
@@ -180,7 +180,7 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
 
     // iterate over the subset and calculate the total weight of its vertices
     double totalWeight = 0;
-    int currentSubsetElement = IndicesSetGetNextElem(workingSubset);
+    int currentSubsetElement = IndicesSetGetFirstElem(workingSubset);
     while (currentSubsetElement != -1) {
       totalWeight += vertexWeights[currentSubsetElement];
 
@@ -195,12 +195,13 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
     if (GraphIsDominatingSet(g, workingSubset)) {
       IndicesSetDestroy(&result);
       result = IndicesSetCreateCopy(workingSubset);
-    }
 
-    lastTotalWeight = totalWeight;
+      lastTotalWeight = totalWeight;
+    }
 
   } while (IndicesSetNextSubset(workingSubset));
 
+  free(vertexWeights);
   IndicesSetDestroy(&workingSubset);
   return result;
 }
