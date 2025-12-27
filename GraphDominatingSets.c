@@ -25,6 +25,12 @@
 #include "IndicesSet.h"
 #include "instrumentation.h"
 
+#define ITERCOUNTER InstrCount[0]
+#define COMPCOUNT InstrCount[1]
+
+#define RESET "\033[0m"
+#define RED "\033[31m"
+
 //
 // FUNCTION FOR CONVENIENCE
 //
@@ -69,6 +75,9 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
 
   IndicesSet* setsDifference = IndicesSetCreateCopy(gSetVertices);
   IndicesSetDifference(setsDifference, vertSet);
+  
+  InstrName[0] = "itercounter";
+  InstrName[1] = "compcount";
   // if the set difference is an empty set, vertSet is a dominating set
   if (IndicesSetIsEmpty(setsDifference)){
 
@@ -89,6 +98,20 @@ int GraphIsDominatingSet(const Graph* g, IndicesSet* vertSet) {
     // get vertexes adjacent to the current vertex
     IndicesSet* adjacentVertices = GraphGetSetAdjacentsTo(g, currentElement);
     int currentAdjElement;
+
+    // There are no adjacent vertices so for all dominating sets this vertex is A MUST
+    if(IndicesSetIsEmpty(adjacentVertices)) {
+      if(IndicesSetContains(vertSet, currentElement)) break;
+
+      // Clean Up before returning
+      // The set we were checking if it was dominating did NOT contain the vertex with no edges
+      // So it cannot be a dominating set
+      IndicesSetDestroy(&adjacentVertices);
+      IndicesSetDestroy(&setsDifference);
+      IndicesSetDestroy(&gSetVertices);
+      IndicesSetDestroy(&setsUnion);
+      return 0;
+    }
 
     currentAdjElement = IndicesSetGetNextElem(adjacentVertices);
     while((currentAdjElement = IndicesSetGetNextElem(adjacentVertices)) != -1) {
@@ -142,6 +165,10 @@ IndicesSet* GraphComputeMinDominatingSet(const Graph* g) {
   //
   // TODO TO BE COMPLETED
   //
+
+  // Reset macros
+  COMPCOUNT = 0;
+  ITERCOUNTER = 0;
   
   uint16_t n = GraphGetVertexRange(g);
 
@@ -152,14 +179,18 @@ IndicesSet* GraphComputeMinDominatingSet(const Graph* g) {
   IndicesSet* workingSubset = IndicesSetCreateEmpty(n);
 
   do {
+    ITERCOUNTER++;
     // ignore the set when empty 
+    COMPCOUNT++;
     if (IndicesSetIsEmpty(workingSubset)) continue;
 
+    COMPCOUNT++;
     // prune: no need to test if already worse than best
     if (IndicesSetGetNumElems(workingSubset) >= IndicesSetGetNumElems(result)) {
       continue;
     }
 
+    COMPCOUNT++;
     if (GraphIsDominatingSet(g, workingSubset)) {
       IndicesSetDestroy(&result);
       result = IndicesSetCreateCopy(workingSubset);
@@ -168,6 +199,11 @@ IndicesSet* GraphComputeMinDominatingSet(const Graph* g) {
   } while (IndicesSetNextSubset(workingSubset));
 
   IndicesSetDestroy(&workingSubset);
+
+  printf(RED"===== MIN DOMINATING SET ====="RESET"\n");
+  printf(RED"ITERATION COUNT: %lu"RESET"\n", ITERCOUNTER);
+  printf(RED"COMPARISONS COUNT: %lu"RESET"\n", COMPCOUNT);
+
   return result;
 }
 
@@ -185,6 +221,10 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
   //
   // TODO TO BE COMPLETED
   //
+
+  // Reset macros
+  COMPCOUNT = 0;
+  ITERCOUNTER = 0;
   
   uint16_t n = GraphGetVertexRange(g);
 
@@ -203,6 +243,9 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
   double lastTotalWeight = GraphCalculateTotalVertexWeight(g);
 
   do {
+    ITERCOUNTER++;
+
+    COMPCOUNT++;
     // ignore the set when empty 
     if (IndicesSetIsEmpty(workingSubset)) continue;
 
@@ -210,16 +253,19 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
     double totalWeight = 0;
     int currentSubsetElement = IndicesSetGetFirstElem(workingSubset);
     while (currentSubsetElement != -1) {
+      COMPCOUNT++;
       totalWeight += vertexWeights[currentSubsetElement];
 
       currentSubsetElement = IndicesSetGetNextElem(workingSubset);
     }
 
+    COMPCOUNT++;
     // prune: no need to test if already worse than best
     if (totalWeight >= lastTotalWeight) {
       continue;
     }
 
+    COMPCOUNT++;
     if (GraphIsDominatingSet(g, workingSubset)) {
       IndicesSetDestroy(&result);
       result = IndicesSetCreateCopy(workingSubset);
@@ -231,5 +277,10 @@ IndicesSet* GraphComputeMinWeightDominatingSet(const Graph* g) {
 
   free(vertexWeights);
   IndicesSetDestroy(&workingSubset);
+
+  printf(RED"===== MIN WEIGHT DOMINATING SET ====="RESET"\n");
+  printf(RED"ITERATION COUNT: %lu"RESET"\n", ITERCOUNTER);
+  printf(RED"COMPARISONS COUNT: %lu"RESET"\n", COMPCOUNT);
+
   return result;
 }

@@ -31,6 +31,8 @@ int main(void) {
 
   GraphCheckInvariants(g02);
 
+  printf(GREEN"========== G02 =========="RESET"\n");
+
   // A full vertex set is a dominating set
   IndicesSet* full_set = IndicesSetCreateFull(GraphGetNumVertices(g02));
   printf("The full set is a dominating set? %d\n",
@@ -73,6 +75,8 @@ int main(void) {
   GraphDestroy(&mwdset_graph);
   printf("\n");
   // Creating another graph
+
+  printf(GREEN"========== G03 =========="RESET"\n");
 
   Graph* g03 = GraphCreateEmpty(4, 0, 0);
   GraphAddVertex(g03, 2);
@@ -150,6 +154,34 @@ int main(void) {
   IndicesSetDestroy(&minWeightSet);
   IndicesSetDestroy(&minDSet);
 
+  Graph* g01 = GraphCreate(6, 0, 0);
+  GraphAddEdge(g01, 1, 2);
+  GraphAddEdge(g01, 1, 4);
+  GraphAddEdge(g01, 3, 4);
+
+  printf(GREEN"========== G01 =========="RESET"\n");
+
+  printf(GREEN"========== Compute Min Weight Dominating Set G01 =========="RESET"\n");
+
+  minWeightSet = GraphComputeMinWeightDominatingSet(g01);
+  IndicesSetDisplay(minWeightSet); 
+
+  Graph* mdsG01 = GraphGetSubgraph(g01, minWeightSet);
+  GraphDisplayDOT(mdsG01);
+  GraphDestroy(&mdsG01);
+
+  printf(GREEN"========== Compute Min Dominating Set G01 =========="RESET"\n");
+
+  minDSet = GraphComputeMinDominatingSet(g01);
+  IndicesSetDisplay(minDSet);
+  
+  Graph* mwdsG01 = GraphGetSubgraph(g01, minDSet);
+  GraphDisplayDOT(mwdsG01);
+  GraphDestroy(&mwdsG01);
+
+  IndicesSetDestroy(&minWeightSet);
+  IndicesSetDestroy(&minDSet);
+
   // The union of the mdset with the set of neighbors of each mdset vertex MUST
   // BE the full vertices set of the graph and the induced subgraph is the graph
   // itself
@@ -162,7 +194,7 @@ int main(void) {
   printf("\n");
 
   // Clearing
-
+  GraphDestroy(&g01);
   GraphDestroy(&g02);
   GraphDestroy(&g03);
   GraphDestroy(&g04);
